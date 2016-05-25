@@ -1,4 +1,7 @@
 package handout.src;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A new instance of HuffmanCoding is created for every run. The constructor is
  * passed the full text to be encoded or decoded, so this is a good place to
@@ -9,8 +12,42 @@ public class HuffmanCoding {
 	/**
 	 * This would be a good place to compute and store the tree.
 	 */
+	
+	private final HashMap<Character, Integer> charFreq;
+	
 	public HuffmanCoding(String text) {
-		// TODO fill this in.
+		// create the character frequency map
+		charFreq = calcFrequency(text);
+		// print each characters frequency
+		int count = 0;
+		for(Map.Entry<Character, Integer> en : charFreq.entrySet()){
+			System.out.println(en.getKey() + " : " + en.getValue());
+			count++;
+		}
+		// print the number of unique characters
+		System.out.println("Character count : " + count);
+	}
+	
+	/* Calculates the frequency of characters in a given string.
+	 * 	returns a map from unique characters to there counts.
+	 */
+	private HashMap<Character,Integer> calcFrequency(String text) {
+		// creates empty map
+		HashMap<Character,Integer> map = new HashMap<Character,Integer>();
+		// iterates over each character in text 
+		for(int i = 0; i < text.length(); i++){
+		   char c = text.charAt(i);
+		   Integer val = map.get(new Character(c));
+		   // keeps a count of the number of instances
+		   // of each character seen
+		   if(val != null){
+		     map.put(c, new Integer(val + 1));
+		   }else{
+		     map.put(c,1);
+		   }
+		}
+		// return the frequency map
+		return map;
 	}
 
 	/**
@@ -41,4 +78,26 @@ public class HuffmanCoding {
 	public String getInformation() {
 		return "";
 	}
+	
+	/* Unused TreeNode class
+	public class TreeNode implements Comparable<TreeNode>{
+		
+		private final char data;
+		private int frequency = 0;
+		
+		public TreeNode(char data){
+			this.data = data;
+		}
+		
+		public void incFreq(){
+			frequency++;
+		}
+
+		@Override
+		public int compareTo(TreeNode o) {
+			return 0;
+		}
+	}
+	*/
 }
+

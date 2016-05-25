@@ -97,6 +97,10 @@ public class Assignment5 {
 
 			String algorithm = (String) list.getSelectedItem();
 			if (algorithm.equals("Huffman coding")) {
+				
+				// get start time
+				long start_time = System.currentTimeMillis();
+
 				// read in the file.
 				String text = readFile(compressionInputFile);
 
@@ -122,6 +126,11 @@ public class Assignment5 {
 				compressionOutput
 						.append("original and decoded texts " + (text.equals(decoded) ? "" : "DO NOT ") + "match.\n");
 				compressionOutput.append(huffman.getInformation());
+				long end_time = System.currentTimeMillis();
+
+				// display time taken
+				long difference = end_time-start_time;
+				compressionOutput.append("Time: " + difference);
 
 			} else if (algorithm.equals("Lempel Ziv")) {
 				// read in the file.
