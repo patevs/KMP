@@ -1,6 +1,8 @@
 package handout.src;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
 
 /**
  * A new instance of HuffmanCoding is created for every run. The constructor is
@@ -14,10 +16,19 @@ public class HuffmanCoding {
 	 */
 	
 	private final HashMap<Character, Integer> charFreq;
+	private PriorityQueue<TreeNode> out;
+	private TreeNode root;
 	
 	public HuffmanCoding(String text) {
 		// create the character frequency map
 		charFreq = calcFrequency(text);
+		// create the queue of characters
+		out = buildQueue(charFreq);
+		// build a hoffman tree from the queue
+		root = buildTree(out);
+		
+		printTree(root);
+		/* FOR TESTING & DEBUGGING
 		// print each characters frequency
 		int count = 0;
 		for(Map.Entry<Character, Integer> en : charFreq.entrySet()){
@@ -26,10 +37,87 @@ public class HuffmanCoding {
 		}
 		// print the number of unique characters
 		System.out.println("Character count : " + count);
+		
+		// prints each node value as polled off the queue
+		while(!out.isEmpty()){
+			TreeNode tn = out.poll();
+			System.out.println("Node : " + tn.data + "  f: " + tn.frequency);
+		}
+		*/
+	}  
+	
+	/** Simply prints the tree recursively 
+	 *   starting from the root node
+	 * 
+	 * @param root
+	 */
+	private void printTree(TreeNode root) {
+		if(root.data != '#'){
+			System.out.println(root.data);
+		} else {
+			System.out.println(root.frequency);
+			printTree(root.left);
+			printTree(root.right);
+		}
+
 	}
 	
-	/* Calculates the frequency of characters in a given string.
-	 * 	returns a map from unique characters to there counts.
+	/** Takes a map from character to frequency
+	 *   and returns a priority queue with the lowest 
+	 *   frequency characters having the highest priority
+	 */
+	private PriorityQueue<TreeNode> buildQueue(HashMap<Character, Integer> in) {
+		PriorityQueue<TreeNode> res = new PriorityQueue<TreeNode>();
+		for(Entry<Character, Integer> e: in.entrySet()){
+			TreeNode t = new TreeNode(e.getKey());
+			t.setFreq(e.getValue());
+			//in.remove(e.getKey());
+			res.add(t);
+		}
+		return res;
+	}
+	
+	/** Builds a Hoffman tree from a priority 
+	 *   queue of tree nodes taken as the input
+	 *   parameter  
+	 * 
+	 * @param out
+	 * @return root node
+	 */
+	private TreeNode buildTree(PriorityQueue<TreeNode> out){
+		
+		TreeNode root = null;
+		// while the queue isnt empty, build the tree
+		while(!out.isEmpty()){
+			TreeNode t1 = out.poll();
+			TreeNode t2 = null;
+			if(!out.isEmpty()){
+				t2 = out.peek();
+				if(root==null || root.getFreq() <= t2.getFreq()) t2 = out.poll();
+				else {
+					t2 = root;
+				}
+			} else {
+				t2 = root;
+			}			
+			//if(root!=null) System.out.println(root.frequency);
+			TreeNode tn = new TreeNode('#');
+			tn.left = t1;
+			tn.right = t2;
+			int f1 = t1.getFreq();
+			int f2 = t2.getFreq();
+			int nFeq = (f1 + f2);
+			tn.setFreq(nFeq);
+			// root now equals this node
+			root = tn;
+		}
+		return root;
+		
+	}
+	
+	/** Calculates the frequency of characters in a given string.
+	 * 	returns a map from unique characters to their counts within
+	 *  the text.
 	 */
 	private HashMap<Character,Integer> calcFrequency(String text) {
 		// creates empty map
@@ -79,25 +167,59 @@ public class HuffmanCoding {
 		return "";
 	}
 	
-	/* Unused TreeNode class
+	
 	public class TreeNode implements Comparable<TreeNode>{
 		
 		private final char data;
 		private int frequency = 0;
 		
+		private TreeNode parent;
+		private TreeNode left;
+		private TreeNode right;
+		
 		public TreeNode(char data){
 			this.data = data;
 		}
-		
-		public void incFreq(){
-			frequency++;
+
+		public void setLeft(TreeNode left) {
+			this.left = left;
+		}
+		public TreeNode getLeft() {
+			return left;
+		}
+		public void setRight(TreeNode right) {
+			this.right = right;
+		}
+		public TreeNode getRight() {
+			return right;
+		}
+		public void setParent(TreeNode parent) {
+			this.parent = parent;
+		}
+		public TreeNode getParent() {
+			return parent;
+		}
+		public char getData(){
+			return data;
+		}	
+		public void setFreq(int freq){
+			frequency = freq;
+		}
+		public int getFreq(){
+			return this.frequency;
 		}
 
 		@Override
 		public int compareTo(TreeNode o) {
-			return 0;
+			if(this.frequency <= o.getFreq()){
+				return -1; // want the smaller frequency first
+			} else if(this.frequency == o.getFreq()){
+				return 0; // equals frequency
+			} else {
+				return 1; // this is a greater priority node
+			}
 		}
 	}
-	*/
+	
 }
 
