@@ -27,7 +27,7 @@ public class HuffmanCoding {
 		// build a hoffman tree from the queue
 		root = buildTree(out);
 		
-		printTree(root);
+		
 		/* FOR TESTING & DEBUGGING
 		// print each characters frequency
 		int count = 0;
@@ -41,8 +41,10 @@ public class HuffmanCoding {
 		// prints each node value as polled off the queue
 		while(!out.isEmpty()){
 			TreeNode tn = out.poll();
-			System.out.println("Node : " + tn.data + "  f: " + tn.frequency);
+			System.out.println("Node : " + tn.data + "  f: " + tn.frequency);		 
 		}
+		
+		printTree(root);
 		*/
 	}  
 	
@@ -67,13 +69,16 @@ public class HuffmanCoding {
 	 *   frequency characters having the highest priority
 	 */
 	private PriorityQueue<TreeNode> buildQueue(HashMap<Character, Integer> in) {
+		// create empty queue
 		PriorityQueue<TreeNode> res = new PriorityQueue<TreeNode>();
+		// create a tree node for each character in map
+		// assigning the frequency of the character for the priority
 		for(Entry<Character, Integer> e: in.entrySet()){
 			TreeNode t = new TreeNode(e.getKey());
 			t.setFreq(e.getValue());
-			//in.remove(e.getKey());
 			res.add(t);
 		}
+		// return the queue
 		return res;
 	}
 	
@@ -100,7 +105,6 @@ public class HuffmanCoding {
 			} else {
 				t2 = root;
 			}			
-			//if(root!=null) System.out.println(root.frequency);
 			TreeNode tn = new TreeNode('#');
 			tn.left = t1;
 			tn.right = t2;
@@ -113,6 +117,18 @@ public class HuffmanCoding {
 		}
 		return root;
 		
+	}
+	
+	public void ExpandBinaryPaths(TreeNode node, String prefix){
+		if(node == null){ 
+			return;
+		} else {
+			StringBuilder sb = new StringBuilder(prefix);
+			node.setCode(sb.toString());
+			ExpandBinaryPaths(node.getLeft(), sb.append('0').toString());
+			ExpandBinaryPaths(node.getRight(), sb.append('1').toString());
+			return;
+		}
 	}
 	
 	/** Calculates the frequency of characters in a given string.
@@ -144,7 +160,11 @@ public class HuffmanCoding {
 	 * only 1 and 0.
 	 */
 	public String encode(String text) {
-		// TODO fill this in.
+		StringBuilder sb = new StringBuilder();
+		int size = text.length();
+		for(int i=0; i<size; i++){
+			char in = text.charAt(i);
+		}
 		return "";
 	}
 
@@ -172,13 +192,22 @@ public class HuffmanCoding {
 		
 		private final char data;
 		private int frequency = 0;
-		
+		private String Code = "";
+
 		private TreeNode parent;
 		private TreeNode left;
 		private TreeNode right;
 		
 		public TreeNode(char data){
 			this.data = data;
+		}
+		
+		public String getCode() {
+			return Code;
+		}
+
+		public void setCode(String code) {
+			Code = code;
 		}
 
 		public void setLeft(TreeNode left) {
